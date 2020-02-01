@@ -18,7 +18,10 @@ Markdownを静的解析し、自動的に整形をします。
 # インストール
 pip install git+https://github.com/yuto51942/markdown-lint
 
-# 起動
+# 起動(ディレクトリを指定してその中の`.ma`を全て整形する場合)
+md-lint-dir
+
+# 起動(特定のファイルのみ)
 md-lint
 ```
 
