@@ -29,7 +29,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'md-lint=src.lint:main'
+            'md-lint-dir=src.lint:lint_directyory',
+            'md-lintsrc.lint:lint_file'
         ],
     }
 )
