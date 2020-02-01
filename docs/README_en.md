@@ -1,8 +1,8 @@
-# markdown lint
+# markdown linter
 
-![python](https://img.shields.io/github/pipenv/locked/python-version/yuto51942/markdown-lint)
-![reposize](https://img.shields.io/github/repo-size/yuto51942/markdown-lint)
-![lastcommit](https://img.shields.io/github/last-commit/yuto51942/markdown-lint)
+![python](https://img.shields.io/github/pipenv/locked/python-version/yuto51942/markdown-linter)
+![reposize](https://img.shields.io/github/repo-size/yuto51942/markdown-linter)
+![lastcommit](https://img.shields.io/github/last-commit/yuto51942/markdown-linter)
 ![github](https://img.shields.io/github/followers/yuto51942?label=FollowMe&style=social)
 ![twitter](https://img.shields.io/twitter/follow/cateiru?style=social)
 
