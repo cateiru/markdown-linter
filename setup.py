@@ -19,7 +19,7 @@ setup(
     url='https://github.com/yuto51942/md-static-code-analysis',
     packages=find_packages("src"),
     include_package_data=True,
-    py_modules=['src'],
+    py_modules=['src/analysis', 'src/md_error'],
     long_description=readme,
     install_requires=install_requires,
     classifiers=[
@@ -29,7 +29,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'md-analysis=src.lint:main'
+            'md-lint=src.lint:main'
         ],
     }
 )
