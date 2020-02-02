@@ -34,15 +34,48 @@ class Analysis():
         with open(file_path) as md_file:
             body_slice = [s.strip() for s in md_file.readlines()]
 
+        return Analysis.__check_blank_line(body_slice)
+
+    @staticmethod
+    def __check_blank_line(body: List[str]) -> List[str]:
+        '''
+        文の末尾の空白行と連続した複数の空白行をチェックします。
+        1. 末尾の空白行は1つのみです。なにもない、2個以上ある場合は1つにします。
+        2. 連続した複数の空白行は1つの空白行に変更します。
+
+        Args:
+            body (List[str]): Markdownで書かれた文。各行ごとにリストで分かれます。
+
+        Returns:
+            List[str]: 整形したあとのMarkdownで書かれた文。各行ごとにリストで分かれます。
+        '''
+        # Check the last line.
         blank_line = 1
-        while body_slice[-blank_line] == '':
+        while body[-blank_line] == '':
             blank_line += 1
         if blank_line == 1:
-            body_slice.append('')
+            body.append('')
         elif blank_line > 1:
-            del body_slice[-blank_line-1:]
-            body_slice.append('')
-        return body_slice
+            del body[-blank_line-1:]
+            body.append('')
+
+        # Two or more spaces.
+        is_befor_blank_line = False
+        count = 0
+        more_blank_line = []
+        for index, line in enumerate(body):
+            if line == '':
+                if is_befor_blank_line:
+                    more_blank_line.append(index)
+                is_befor_blank_line = True
+            else:
+                is_befor_blank_line = False
+
+        for line in more_blank_line:
+            del body[line-count]
+            count += 1
+
+        return body
 
     def check_title(self) -> str:
         '''
@@ -60,13 +93,13 @@ class Analysis():
             str: タイトルの本文
         '''
         count_title = 0
-        for line in self.body:
+        for index, line in enumerate(self.body):
             title = re.fullmatch(r'^\#\s?(?P<title>[^\#]+)(?P<invalid>(.+)?)', line)
             if title:
                 if title.group('invalid'):
                     raise md_error.FormatError('`#` Exists in the body of the title.')
                 title_body = title.group('title')
-                title_line = self.body.index(line)
+                title_line = index
                 count_title += 1
         if count_title == 0:
             raise md_error.TitleNotFound('Title not found.')
@@ -99,7 +132,7 @@ class Analysis():
         headers = dict()
         header_level = 0
         header_level_befor = None
-        for line in self.body:
+        for index, line in enumerate(self.body):
             header = re.fullmatch(r'^(?P<level>\#{2,})\s?(?P<header>[^\#]+)(?P<invalid>(.+)?)', line)
             if header:
                 if header.group('invalid'):
@@ -112,7 +145,7 @@ class Analysis():
                     raise md_error.FormatError('The header is incremented by one level at a time.')
 
                 header_level_befor = header_level
-                headers[self.body.index(line)] = [header.group('header'), header.group('level')]
+                headers[index] = [header.group('header'), header.group('level')]
 
         blank_line_count = 0
         for line in headers:
