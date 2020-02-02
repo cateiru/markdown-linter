@@ -18,10 +18,9 @@ Markdown is statically analyzed and automatically shaped.
 # install
 pip install git+https://github.com/yuto51942/markdown-lint
 
-# run(Specifying a directory and formatting all `.ma` in it)
-md-lint-dir
-
-# run(Only specific files)
+# run
+# - Specify a directory → convert all `.md` files in that directory.
+# - Specify the path of the `.md` file → convert that file
 md-lint
 ```
 

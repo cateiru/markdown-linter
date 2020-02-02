@@ -12,14 +12,14 @@ with io.open("src/__init__.py", "rt", encoding="utf8") as f:
 install_requires = ['click']
 
 setup(
-    name='md_analysis',
+    name='md-analysis',
     version=version,
     description='Performs static code analysis on Markdown files.',
     author='yuto51942',
-    url='https://github.com/yuto51942/md-static-code-analysis',
-    packages=find_packages("src"),
+    url='https://github.com/yuto51942/md-linter',
+    packages=find_packages(),
     include_package_data=True,
-    py_modules=['src/analysis', 'src/md_error'],
+    py_modules=['src/analysis', 'src/md_error', 'src/lint'],
     long_description=readme,
     install_requires=install_requires,
     classifiers=[
@@ -29,8 +29,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'md-lint-dir=src.lint:lint_directyory',
-            'md-lint=src.lint:lint_file'
+            'md-lint=src.lint:main'
         ],
     }
 )

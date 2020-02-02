@@ -5,7 +5,10 @@ import os
 import re
 from typing import List
 
-import md_error
+try:
+    from src import md_error
+except ModuleNotFoundError:
+    import md_error
 
 
 class Analysis():
