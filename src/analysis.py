@@ -30,7 +30,14 @@ class Analysis():
         '''
         with open(file_path) as md_file:
             body_slice = [s.strip() for s in md_file.readlines()]
-        if body_slice[-1] != '':
+
+        blank_line = 1
+        while body_slice[-blank_line] == '':
+            blank_line += 1
+        if blank_line == 1:
+            body_slice.append('')
+        elif blank_line > 1:
+            del body_slice[-blank_line-1:]
             body_slice.append('')
         return body_slice
 
@@ -87,11 +94,21 @@ class Analysis():
             md_error.FormatError: ヘッダー文の中に`#`が存在する場合。
         '''
         headers = dict()
+        header_level = 0
+        header_level_befor = None
         for line in self.body:
             header = re.fullmatch(r'^(?P<level>\#{2,})\s?(?P<header>[^\#]+)(?P<invalid>(.+)?)', line)
             if header:
                 if header.group('invalid'):
                     raise md_error.FormatError('`#` Exists in the body of the header.')
+                header_level = header.group('level').count('#')
+                if header_level == header_level_befor or header_level+1 == header_level_befor or\
+                        header_level-1 == header_level_befor or header_level_befor is None:
+                    header_level_befor = header_level
+                else:
+                    raise md_error.FormatError('The header is incremented by one level at a time.')
+
+                header_level_befor = header_level
                 headers[self.body.index(line)] = [header.group('header'), header.group('level')]
 
         blank_line_count = 0

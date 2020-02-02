@@ -27,5 +27,3 @@
 
 ```python
 def main() -> None:
-print("これはプログラム")
-```
