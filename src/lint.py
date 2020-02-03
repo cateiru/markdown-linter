@@ -51,6 +51,7 @@ def __lint_dir(directory: str) -> None:
         analysis = Analysis(save_file_dir, md_file)
         analysis.check_title()
         analysis.check_header()
+        analysis.check_link()
         analysis.export_md(new_file_name)
     else:
         raise FileNotFoundError('`.md`file not found.')
@@ -76,6 +77,7 @@ def __lint_file(file_path: str) -> None:
     analysis = Analysis(save_file_dir, file_path)
     analysis.check_title()
     analysis.check_header()
+    analysis.check_link()
     analysis.export_md(new_file_name)
 
 

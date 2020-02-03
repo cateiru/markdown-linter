@@ -32,7 +32,7 @@ class Analysis():
             List[str]: `.md`ファイルの本文。各行ごとにリストに分かれます。
         '''
         with open(file_path) as md_file:
-            body_slice = [s.strip() for s in md_file.readlines()]
+            body_slice = md_file.read().split('\n')
 
         return Analysis.__check_blank_line(body_slice)
 
@@ -56,7 +56,7 @@ class Analysis():
         if blank_line == 1:
             body.append('')
         elif blank_line > 1:
-            del body[-blank_line-1:]
+            del body[-(blank_line-1):]
             body.append('')
 
         # Two or more spaces.
@@ -166,6 +166,19 @@ class Analysis():
                 del self.body[line+blank_line_count+1:line+check_blank_line_deep+blank_line_count]
                 self.body.insert(line+blank_line_count+1, '')
                 blank_line_count -= check_blank_line_deep - 2
+
+    def check_link(self) -> None:
+        '''
+        リンクが入った行を整形します。
+        1. URLのみの場合→`[hoge](hoge)`の形式に変更します。
+        2. 文の中にURLがある場合→`~~~[hoge](hoge)~~~`に変更します。
+        '''
+        for index, line in enumerate(self.body):
+            if re.match(r'.+\[.+\]\(.+\).+', line) is None:
+                link = re.search(r'https?:\/\/[^\s]+', line)
+                print(link)
+                if link:
+                    self.body[index] = re.sub(r'(?P<link>https?:\/\/[^\s]+)', r'[\g<link>](\g<link>)', line)
 
     def export_md(self, file_nema: str) -> None:
         '''
