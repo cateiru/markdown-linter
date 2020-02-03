@@ -125,7 +125,6 @@ class Analysis():
         1. `#`とヘッダー文の間に空白を空けます。
         2. ヘッダーの上下の行は空白行でなければいけません。
 
-
         Raises:
             md_error.FormatError: ヘッダー文の中に`#`が存在する場合。
         '''
@@ -176,7 +175,6 @@ class Analysis():
         for index, line in enumerate(self.body):
             if re.match(r'.+\[.+\]\(.+\).+', line) is None:
                 link = re.search(r'https?:\/\/[^\s]+', line)
-                print(link)
                 if link:
                     self.body[index] = re.sub(r'(?P<link>https?:\/\/[^\s]+)', r'[\g<link>](\g<link>)', line)
 

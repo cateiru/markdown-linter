@@ -1,4 +1,3 @@
-# pylint: disable=W0107
 class TitleNotFound(Exception):
     '''
     Markdownのタイトル、
