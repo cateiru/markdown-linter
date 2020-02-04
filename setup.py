@@ -11,7 +11,7 @@ with io.open("src/__init__.py", "rt", encoding="utf8") as f:
 
 install_requires = [
     'click',
-    'bs4'
+    'beautifulsoup4'
 ]
 
 setup(
