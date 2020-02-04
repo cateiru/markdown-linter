@@ -20,7 +20,7 @@ setup(
     description='Performs static code analysis on Markdown files.',
     author='yuto51942',
     url='https://github.com/yuto51942/md-linter',
-    packages=find_packages(),
+    packages=find_packages("src"),
     include_package_data=True,
     py_modules=['src/analysis', 'src/md_error', 'src/lint'],
     long_description=readme,
