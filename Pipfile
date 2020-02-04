@@ -8,10 +8,9 @@ pylint = "*"
 flake8 = "*"
 tox = "*"
 mypy = "*"
-v = {editable = true,version = "*"}
 
 [packages]
-md-analysis = {path = "."}
+md-analysis = {editable = true, path = "."}
 
 [requires]
 python_version = "3.6"
