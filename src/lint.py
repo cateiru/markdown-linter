@@ -3,18 +3,15 @@
 '''
 import os
 from glob import glob
-from typing import List
 
 import click
 
-try:
-    from src.analysis import Analysis
-except ModuleNotFoundError:
-    from analysis import Analysis
+from src.analysis import Analysis
 
 
 @click.command()
-@click.option('--file-path', 'file_path', prompt=True, type=click.Path(exists=True), help='`.md` file path or directory path.')
+@click.option('--file-path', 'file_path', prompt=True, type=click.Path(exists=True),
+              help='`.md` file path or directory path.')
 def main(file_path: str) -> None:
     '''
     `.md`ファイルを全て静的解析、整形をします。
@@ -49,11 +46,13 @@ def __lint_dir(directory: str) -> None:
         new_file_name = click.prompt(
             f'save file name.(read file: {old_file_name}.md)', default='lint_'+old_file_name)
         analysis = Analysis(save_file_dir, md_file)
+        analysis.check_blank_line()
         analysis.check_title()
         analysis.check_header()
-        analysis.check_link()
+        analysis.check_link(vaild_link=True)
+        analysis.check_image()
         analysis.export_md(new_file_name)
-    else:
+    else:  # pylint: disable=W0120
         raise FileNotFoundError('`.md`file not found.')
 
 
@@ -75,11 +74,9 @@ def __lint_file(file_path: str) -> None:
     old_file_name = os.path.splitext(os.path.basename(file_path))[0]
     new_file_name = click.prompt(f'save file name.(read file: {old_file_name}.md)', default='lint_'+old_file_name)
     analysis = Analysis(save_file_dir, file_path)
+    analysis.check_blank_line()
     analysis.check_title()
     analysis.check_header()
-    analysis.check_link()
+    analysis.check_link(vaild_link=True)
+    analysis.check_image()
     analysis.export_md(new_file_name)
-
-
-if __name__ == "__main__":
-    main()  # pylint: disable=E1120

@@ -9,7 +9,10 @@ with open('README.md', encoding='utf-8', mode='r') as f:
 with io.open("src/__init__.py", "rt", encoding="utf8") as f:
     version = re.search(r"__version__ = '(.*?)'", f.read()).group(1)
 
-install_requires = ['click']
+install_requires = [
+    'click',
+    'bs4'
+]
 
 setup(
     name='md-analysis',

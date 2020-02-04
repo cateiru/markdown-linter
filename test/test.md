@@ -39,3 +39,10 @@ https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code
 文の中に[LINK](https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style)がある。
 
 文の中にhttps://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style がある。
+
+
+![img](IMG_0044.png)
+
+<img src='IMG_0044.png' alt='img'>
+
+<img src='IMG_0044.png'>

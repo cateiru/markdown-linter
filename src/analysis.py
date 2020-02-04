@@ -3,12 +3,13 @@ main.
 '''
 import os
 import re
+import sys
 from typing import List
+from urllib import error, request
 
-try:
-    from src import md_error
-except ModuleNotFoundError:
-    import md_error
+from bs4 import BeautifulSoup
+
+from src import md_error
 
 
 class Analysis():
@@ -34,36 +35,29 @@ class Analysis():
         with open(file_path) as md_file:
             body_slice = md_file.read().split('\n')
 
-        return Analysis.__check_blank_line(body_slice)
+        return body_slice
 
-    @staticmethod
-    def __check_blank_line(body: List[str]) -> List[str]:
+    def check_blank_line(self) -> None:
         '''
         文の末尾の空白行と連続した複数の空白行をチェックします。
         1. 末尾の空白行は1つのみです。なにもない、2個以上ある場合は1つにします。
         2. 連続した複数の空白行は1つの空白行に変更します。
-
-        Args:
-            body (List[str]): Markdownで書かれた文。各行ごとにリストで分かれます。
-
-        Returns:
-            List[str]: 整形したあとのMarkdownで書かれた文。各行ごとにリストで分かれます。
         '''
         # Check the last line.
         blank_line = 1
-        while body[-blank_line] == '':
+        while self.body[-blank_line] == '':
             blank_line += 1
         if blank_line == 1:
-            body.append('')
+            self.body.append('')
         elif blank_line > 1:
-            del body[-(blank_line-1):]
-            body.append('')
+            del self.body[-(blank_line-1):]
+            self.body.append('')
 
         # Two or more spaces.
         is_befor_blank_line = False
         count = 0
         more_blank_line = []
-        for index, line in enumerate(body):
+        for index, line in enumerate(self.body):
             if line == '':
                 if is_befor_blank_line:
                     more_blank_line.append(index)
@@ -71,11 +65,9 @@ class Analysis():
             else:
                 is_befor_blank_line = False
 
-        for line in more_blank_line:
-            del body[line-count]
+        for line_index in more_blank_line:
+            del self.body[line_index-count]
             count += 1
-
-        return body
 
     def check_title(self) -> str:
         '''
@@ -103,7 +95,7 @@ class Analysis():
                 count_title += 1
         if count_title == 0:
             raise md_error.TitleNotFound('Title not found.')
-        elif count_title > 1:
+        if count_title > 1:
             raise md_error.FormatError('Multiple titles.')
 
         self.body.insert(0, f'# {title_body}')
@@ -147,36 +139,61 @@ class Analysis():
                 headers[index] = [header.group('header'), header.group('level')]
 
         blank_line_count = 0
-        for line in headers:
-            self.body[line+blank_line_count] = f'{headers[line][1]} {headers[line][0]}'
+        for line_index in headers:
+            self.body[line_index+blank_line_count] = f'{headers[line_index][1]} {headers[line_index][0]}'
 
             check_blank_line_deep = 1
             check_blank_line_shallow = 1
-            while self.body[line+check_blank_line_deep+blank_line_count] == '':
+            while self.body[line_index+check_blank_line_deep+blank_line_count] == '':
                 check_blank_line_deep += 1
-            while self.body[line-check_blank_line_shallow+blank_line_count] == '':
+            while self.body[line_index-check_blank_line_shallow+blank_line_count] == '':
                 check_blank_line_shallow += 1
 
             if check_blank_line_shallow != 2:
-                del self.body[line-check_blank_line_shallow+blank_line_count+1:line+blank_line_count]
-                self.body.insert(line+blank_line_count-(check_blank_line_shallow-1), '')
+                del self.body[line_index-check_blank_line_shallow+blank_line_count+1:line_index+blank_line_count]
+                self.body.insert(line_index+blank_line_count-(check_blank_line_shallow-1), '')
                 blank_line_count -= check_blank_line_shallow - 2
             if check_blank_line_deep != 2:
-                del self.body[line+blank_line_count+1:line+check_blank_line_deep+blank_line_count]
-                self.body.insert(line+blank_line_count+1, '')
+                del self.body[line_index+blank_line_count+1:line_index+check_blank_line_deep+blank_line_count]
+                self.body.insert(line_index+blank_line_count+1, '')
                 blank_line_count -= check_blank_line_deep - 2
 
-    def check_link(self) -> None:
+    def check_link(self, vaild_link: bool = False) -> None:
         '''
         リンクが入った行を整形します。
         1. URLのみの場合→`[hoge](hoge)`の形式に変更します。
         2. 文の中にURLがある場合→`~~~[hoge](hoge)~~~`に変更します。
+
+        Args:
+            vaild_link (bool): Markdown内のURLのリンクが存在しているかをチェックする。
         '''
         for index, line in enumerate(self.body):
-            if re.match(r'.+\[.+\]\(.+\).+', line) is None:
-                link = re.search(r'https?:\/\/[^\s]+', line)
+            link = re.search(r'https?:\/\/[^(\s|\]|\))]+', line)
+            if vaild_link and link:
+                try:
+                    with request.urlopen(link.group()):
+                        print(f'[{link.group()}]: OK')
+                except error.URLError as err:
+                    sys.exit(f'[{link.group()}] is {err.reason}')
+            if re.match(r'.*\[.+\]\(.+\).*', line) is None:
                 if link:
                     self.body[index] = re.sub(r'(?P<link>https?:\/\/[^\s]+)', r'[\g<link>](\g<link>)', line)
+
+    def check_image(self) -> None:
+        '''
+        画像タグを整形します。
+        1. `<img src='~~' alt='~~~'>`を`![~~](~~~)`に整形します。
+        '''
+        for index, line in enumerate(self.body):
+            is_tag = re.fullmatch(r'^\<img.+\>', line)
+            if is_tag:
+                img_tag = BeautifulSoup(line, features='html.parser').select('img')[0]
+                img_src = img_tag['src']
+                try:
+                    img_alt = img_tag['alt']
+                except KeyError:
+                    img_alt = img_src
+                self.body[index] = f'![{img_alt}]({img_src})'
 
     def export_md(self, file_nema: str) -> None:
         '''

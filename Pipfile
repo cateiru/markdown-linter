@@ -4,8 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
+flake8 = "*"
+tox = "*"
+mypy = "*"
+v = {editable = true,version = "*"}
 
 [packages]
+md-analysis = {path = "."}
 
 [requires]
 python_version = "3.6"

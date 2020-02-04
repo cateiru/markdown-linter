@@ -31,8 +31,14 @@ def main() -> None:
     print("これはプログラム")
 ```
 
-[https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style](https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style)
+[https://github.om/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style](https://github.om/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style)
 
 文の中に[LINK](https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style)がある。
 
 文の中に[https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style](https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md048---code-fence-style) がある。
+
+![img](IMG_0044.png)
+
+![img](IMG_0044.png)
+
+![IMG_0044.png](IMG_0044.png)
